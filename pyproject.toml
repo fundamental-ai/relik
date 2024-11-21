@@ -47,6 +47,8 @@ termcolor = "^2.5.0"
 transformers = { extras = ["sentencepiece"], version = "^4.46.3" }
 typer = "^0.13.1"
 wandb = "^0.18.7"
+pprintpp = "^0.4.0"
+spacy = "^3.8.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -74,6 +76,9 @@ pyvis = "^0.3.2"
 streamlit = "^1.40.1"
 streamlit-extras = "^0.5.0"
 uvicorn = { extras = ["standart"], version = "^0.32.1" }
+
+[tool.poetry.scripts]
+relik = "relik.cli.cli:app"
 
 [build-system]
 requires = ["poetry-core"]
