@@ -4,9 +4,50 @@ import torch
 from transformers import AutoModel, PreTrainedModel
 from transformers.activations import ClippedGELUActivation, GELUActivation
 from transformers.configuration_utils import PretrainedConfig
-from transformers.modeling_utils import PoolerEndLogits
+# from transformers.modeling_utils import PoolerEndLogits
 
 from .configuration_relik import RelikReaderConfig
+
+class PoolerEndLogits(torch.nn.Module):
+    """
+    Compute SQuAD end logits from sequence hidden states.
+    """
+    def __init__(self, config):
+        super().__init__()
+        self.dense = torch.nn.Linear(config.hidden_size, 1)
+
+    def forward(
+        self,
+        hidden_states: torch.FloatTensor,
+        start_states: Optional[torch.FloatTensor] = None,
+        start_positions: Optional[torch.LongTensor] = None,
+        p_mask: Optional[torch.FloatTensor] = None,
+    ) -> torch.FloatTensor:
+        assert (
+            start_states is not None or start_positions is not None
+        ), "One of start_states, start_positions should be not None"
+        if start_positions is not None:
+            if len(start_positions.size()) > 1:
+                start_positions = start_positions.squeeze(-1)
+            start_states = torch.gather(
+                hidden_states, 
+                -2, 
+                start_positions.unsqueeze(-1).unsqueeze(-1).expand(-1, -1, hidden_states.size(-1))
+            )
+            start_states = start_states.squeeze(-2)
+
+        x = self.dense(hidden_states)
+        if start_states is not None:
+            x = x + start_states.unsqueeze(-2)
+        x = x.squeeze(-1)
+
+        if p_mask is not None:
+            if next(self.parameters()).dtype == torch.float16:
+                x = x * (1 - p_mask) - 65500 * p_mask
+            else:
+                x = x * (1 - p_mask) - 1e30 * p_mask
+
+        return x
 
 
 class RelikReaderSample:
