@@ -130,18 +130,15 @@ class RelikReaderSpanModel(PreTrainedModel):
             padding_idx=old_embeddings.padding_idx,
             dtype=old_embeddings.weight.dtype
         )
-        
-        # Copy existing weights and initialize new ones
         with torch.no_grad():
             new_embeddings.weight[:self.transformer_model.config.vocab_size] = old_embeddings.weight
             # Initialize new tokens with mean of existing embeddings
             if new_vocab_size > self.transformer_model.config.vocab_size:
                 mean_emb = old_embeddings.weight.mean(dim=0)
                 new_embeddings.weight[self.transformer_model.config.vocab_size:] = mean_emb
-        
         self.transformer_model.set_input_embeddings(new_embeddings)
-        self.transformer_model.config.vocab_size = new_vocab_size
 
+        #rest.
         self.activation = self.config.activation
         self.linears_hidden_size = self.config.linears_hidden_size
         self.use_last_k_layers = self.config.use_last_k_layers
