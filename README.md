@@ -5,6 +5,8 @@
 
 <div align="center">
 
+# NOTE <!>: USE WITH PYTHON 3.13.7 or 3.13.9. This breaks with 3.13.8!
+
 # Retrieve, Read and LinK: Fast and Accurate Entity Linking and Relation Extraction on an Academic Budget
 
 [![Conference](http://img.shields.io/badge/ACL-2024-4b44ce.svg)](https://2024.aclweb.org/)
