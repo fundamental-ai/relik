@@ -1,3 +1,6 @@
+import os
+os.environ.setdefault("TRANSFORMERS_NO_MEAN_INIT", "1")
+
 import collections
 import logging
 from typing import Any, Dict, Iterator, List
@@ -69,7 +72,7 @@ class RelikReaderForSpanExtraction(RelikReaderBase):
         tokenizer: str | tr.PreTrainedTokenizer | None = None,
         dataset: IterableDataset | str | None = None,
         dataset_kwargs: Dict[str, Any] | None = None,
-        default_reader_class: tr.PreTrainedModel | str | None = None,
+        default_reader_class: Any | None = None,
         **kwargs,
     ):
         super().__init__(

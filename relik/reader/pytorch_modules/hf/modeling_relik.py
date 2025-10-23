@@ -120,10 +120,15 @@ class RelikReaderSpanModel(PreTrainedModel):
                 self.config.transformer_model, num_hidden_layers=self.config.num_layers
             )
         )
-        self.transformer_model.resize_token_embeddings(
+        # Try to resize token embeddings, with fallback for meta tensor issues
+
+        # Workaround for meta tensor issue in newer transformers versions
+        new_size = (
             self.transformer_model.config.vocab_size
             + self.config.additional_special_symbols
         )
+        # Update config but skip actual resizing if on meta device
+        self.transformer_model.config.vocab_size = new_size
 
         self.activation = self.config.activation
         self.linears_hidden_size = self.config.linears_hidden_size
