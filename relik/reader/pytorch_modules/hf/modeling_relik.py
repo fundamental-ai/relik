@@ -45,6 +45,7 @@ class PoolerEndLogits(torch.nn.Module):
             if next(self.parameters()).dtype == torch.float16:
                 x = x * (1 - p_mask) - 65500 * p_mask
             else:
+                print(f"{x.shape=}, {p_mask.shape=}")
                 x = x * (1 - p_mask) - 1e30 * p_mask
 
         return x
