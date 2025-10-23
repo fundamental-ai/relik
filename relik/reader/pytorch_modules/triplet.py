@@ -4,7 +4,6 @@ from typing import Any, Dict, Iterator, List
 
 import numpy as np
 import torch
-torch.jit._state._enabled = False
 
 import transformers as tr
 from lightning_fabric.utilities import move_data_to_device
